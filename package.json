@@ -1,0 +1,20 @@
+{
+  "name": "otomora-d",
+  "version": "0.1.0",
+  "description": "Otomora D",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test:timestretch": "cross-env OTOMORA_TEST=timestretch electron .",
+    "test:audiosync": "cross-env OTOMORA_TEST=audio_point electron .",
+    "test:pitchdrop": "cross-env OTOMORA_TEST=pitchdrop electron .",
+    "test:granular":  "cross-env OTOMORA_TEST=granular electron ."
+  },
+  "dependencies": {
+    "soundtouchjs": "^0.2.3"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "electron": "^29.0.0"
+  }
+}

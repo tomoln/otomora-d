@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>タイムストレッチ テスト</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    button { margin: 4px; padding: 6px 14px; }
+    label { display: block; margin-top: 12px; }
+    #tempo { width: 300px; }
+  </style>
+</head>
+<body>
+  <h3>タイムストレッチ テスト</h3>
+
+  <button id="btn-play">▶ 再生</button>
+  <button id="btn-stop" disabled>■ 停止</button>
+
+  <label>
+    テンポ倍率: <strong id="tempo-value">1.00</strong>x
+    <input type="range" id="tempo" min="0.5" max="3.0" step="0.01" value="1.0">
+  </label>
+
+  <label style="margin-top:10px; font-size:0.9em;">
+    BPM変換:
+    元 <input type="number" id="original-bpm" value="120" min="1" max="300" style="width:55px">
+    → 目標 <input type="number" id="target-bpm" value="120" min="1" max="900" style="width:55px">
+    <button id="btn-apply-bpm" style="padding:2px 8px;">適用</button>
+  </label>
+
+  <div id="status" style="margin-top:14px; color:#555;">待機中</div>
+
+  <script src="test.js"></script>
+</body>
+</html>

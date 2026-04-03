@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>グラニュラーフリーズ テスト</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #1a1a1a; color: #eee; }
+    button { padding: 6px 14px; margin: 4px; }
+    label { display: block; margin-top: 10px; }
+    #status { margin-top: 14px; color: #aaa; font-size: 0.9em; }
+
+    #btn-freeze {
+      margin-top: 14px;
+      padding: 10px 28px;
+      font-size: 1.1em;
+      background: #333;
+      color: #eee;
+      border: 2px solid #555;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #btn-freeze.active {
+      background: #0d4a6e;
+      border-color: #44aaff;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h3 style="margin:0 0 12px">グラニュラーフリーズ テスト</h3>
+
+  <button id="btn-play">▶ 再生</button>
+  <button id="btn-stop" disabled>■ 停止</button>
+
+  <label>
+    グレインサイズ:
+    <strong id="grain-size-value">150</strong> ms
+    <input type="range" id="grain-size" min="40" max="400" step="10" value="150" style="width:200px">
+  </label>
+
+  <br>
+  <button id="btn-freeze">フリーズ ON</button>
+
+  <div id="status">待機中</div>
+
+  <script src="test.js"></script>
+</body>
+</html>

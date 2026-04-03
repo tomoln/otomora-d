@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>オーディオポイント テスト</title>
+  <style>
+    body { font-family: sans-serif; padding: 16px; background: #1a1a1a; color: #eee; }
+    button { margin: 4px; padding: 6px 14px; }
+    label { display: inline-block; margin-right: 16px; margin-top: 8px; }
+    #mora-log { margin-top: 10px; font-size: 1.4em; letter-spacing: 0.15em; min-height: 1.8em; }
+    #status { margin-top: 6px; color: #aaa; font-size: 0.85em; }
+
+    #canvas-wrap {
+      position: relative;
+      margin-top: 14px;
+      border: 2px solid #444;
+      border-radius: 4px;
+      overflow: hidden;
+      transition: border-color 0.05s;
+    }
+    #canvas-wrap.beat-flash { border-color: #ff4444; }
+    #waveform { display: block; background: #111; width: 100%; }
+
+    .controls { margin-top: 10px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .controls label { margin: 0; }
+    #zoom { width: 160px; }
+    #zoom-value { min-width: 3em; display: inline-block; }
+  </style>
+</head>
+<body>
+  <h3 style="margin:0 0 10px">オーディオポイント テスト</h3>
+
+  <div class="controls">
+    <label>BPM: <input type="number" id="bpm" value="120" min="40" max="300" style="width:56px"></label>
+    <button id="btn-play">▶ 再生</button>
+    <button id="btn-stop" disabled>■ 停止</button>
+  </div>
+
+  <div class="controls">
+    <label>ズーム: <input type="range" id="zoom" min="1" max="32" step="0.5" value="4"></label>
+    <span id="zoom-value">x4</span>
+  </div>
+
+  <div class="controls">
+    <label>オーディオ オフセット:</label>
+    <button id="btn-offset-minus10">-10ms</button>
+    <button id="btn-offset-minus1">-1ms</button>
+    <span id="offset-value" style="min-width:5em; display:inline-block; text-align:center; font-size:1.1em;">0 ms</span>
+    <button id="btn-offset-plus1">+1ms</button>
+    <button id="btn-offset-plus10">+10ms</button>
+    <button id="btn-offset-reset" style="margin-left:8px; color:#aaa;">リセット</button>
+  </div>
+
+  <div id="mora-log">—</div>
+  <div id="status">待機中</div>
+
+  <div id="canvas-wrap">
+    <canvas id="waveform" height="180"></canvas>
+  </div>
+
+  <script src="test.js"></script>
+</body>
+</html>
