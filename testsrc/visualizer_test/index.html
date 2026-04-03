@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Mora Visualizer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; overflow: hidden; }
+    canvas { display: block; }
+    #overlay {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.55);
+      padding: 8px 18px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(4px);
+    }
+    button {
+      padding: 5px 16px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #ddd;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 0.85em;
+    }
+    button:hover:not(:disabled) { background: rgba(255, 255, 255, 0.18); }
+    button:disabled { opacity: 0.35; cursor: default; }
+    #status { color: rgba(255, 255, 255, 0.4); font-size: 0.78em; font-family: sans-serif; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="overlay">
+    <button id="btn-play">▶ 再生</button>
+    <button id="btn-stop" disabled>■ 停止</button>
+    <span id="status">待機中</span>
+  </div>
+  <script src="test.js"></script>
+</body>
+</html>
