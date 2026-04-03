@@ -6,10 +6,11 @@ function resolveEntryFile() {
     timestretch:  '../../testsrc/timestretch_test/index.html',
     audio_point:  '../../testsrc/audiosync_test/index.html',
     pitchdrop:    '../../testsrc/pitchdrop_test/index.html',
-    granular:     '../../testsrc/granular_test/index.html'
+    granular:     '../../testsrc/granular_test/index.html',
+    granular_plus: '../../testsrc/granular_plus_test/index.html'
   };
 
-  return pageMap[process.env.OTOMORA_TEST] || pageMap.granular;
+  return pageMap[process.env.OTOMORA_TEST] || pageMap.granular_plus;
 }
 
 function createWindow() {

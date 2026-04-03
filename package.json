@@ -8,7 +8,8 @@
     "test:timestretch": "cross-env OTOMORA_TEST=timestretch electron .",
     "test:audiosync": "cross-env OTOMORA_TEST=audio_point electron .",
     "test:pitchdrop": "cross-env OTOMORA_TEST=pitchdrop electron .",
-    "test:granular":  "cross-env OTOMORA_TEST=granular electron ."
+    "test:granular":      "cross-env OTOMORA_TEST=granular electron .",
+    "test:granular-plus": "cross-env OTOMORA_TEST=granular_plus electron ."
   },
   "dependencies": {
     "soundtouchjs": "^0.2.3"
