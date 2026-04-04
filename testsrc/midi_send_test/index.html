@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>MIDI ボタンマッピング テスト</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #eee;
+      user-select: none;
+    }
+    h3 { margin: 0 0 14px; }
+
+    #devices {
+      font-size: 0.8em;
+      color: #888;
+      margin-bottom: 16px;
+      min-height: 1.2em;
+    }
+
+    #buttons-area {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 420px;
+    }
+
+    .btn-slot {
+      background: #262626;
+      border: 2px solid #444;
+      border-radius: 8px;
+      padding: 14px 12px 10px;
+    }
+    .btn-slot.fired {
+      border-color: #44aaff;
+      background: #0d3a56;
+    }
+    .btn-slot.learning {
+      border-color: #ffaa33;
+      background: #3a2800;
+      animation: pulse 0.8s infinite alternate;
+    }
+    @keyframes pulse {
+      from { border-color: #ffaa33; }
+      to   { border-color: #ff6600; }
+    }
+
+    .ui-btn {
+      width: 100%;
+      padding: 14px 0;
+      font-size: 1.1em;
+      font-weight: bold;
+      background: #333;
+      color: #eee;
+      border: 2px solid #555;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.08s;
+    }
+    .ui-btn:active, .ui-btn.fired {
+      background: #1a5080;
+      border-color: #44aaff;
+    }
+
+    .assign-row {
+      display: flex;
+      align-items: center;
+      margin-top: 8px;
+      gap: 6px;
+    }
+    .assign-btn {
+      padding: 3px 10px;
+      font-size: 0.78em;
+      background: #333;
+      color: #aaa;
+      border: 1px solid #555;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .assign-btn.active {
+      background: #4a3000;
+      color: #ffaa33;
+      border-color: #ffaa33;
+    }
+    .clear-btn {
+      padding: 3px 8px;
+      font-size: 0.78em;
+      background: #2a1a1a;
+      color: #884444;
+      border: 1px solid #553333;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .mapping-label {
+      font-size: 0.75em;
+      color: #666;
+      flex: 1;
+      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .mapping-label.assigned { color: #88cc88; }
+
+    #status {
+      margin-top: 14px;
+      font-size: 0.82em;
+      color: #888;
+      min-height: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <h3>MIDI ボタンマッピング テスト</h3>
+
+  <div id="devices">MIDIデバイスを検索中...</div>
+
+  <div id="buttons-area">
+    <div class="btn-slot" id="slot-0">
+      <button class="ui-btn" id="ui-btn-0">Button 1</button>
+      <div class="assign-row">
+        <button class="assign-btn" id="assign-0">割り当て</button>
+        <button class="clear-btn" id="clear-0">✕</button>
+        <span class="mapping-label" id="label-0">未割り当て</span>
+      </div>
+    </div>
+    <div class="btn-slot" id="slot-1">
+      <button class="ui-btn" id="ui-btn-1">Button 2</button>
+      <div class="assign-row">
+        <button class="assign-btn" id="assign-1">割り当て</button>
+        <button class="clear-btn" id="clear-1">✕</button>
+        <span class="mapping-label" id="label-1">未割り当て</span>
+      </div>
+    </div>
+    <div class="btn-slot" id="slot-2">
+      <button class="ui-btn" id="ui-btn-2">Button 3</button>
+      <div class="assign-row">
+        <button class="assign-btn" id="assign-2">割り当て</button>
+        <button class="clear-btn" id="clear-2">✕</button>
+        <span class="mapping-label" id="label-2">未割り当て</span>
+      </div>
+    </div>
+    <div class="btn-slot" id="slot-3">
+      <button class="ui-btn" id="ui-btn-3">Button 4</button>
+      <div class="assign-row">
+        <button class="assign-btn" id="assign-3">割り当て</button>
+        <button class="clear-btn" id="clear-3">✕</button>
+        <span class="mapping-label" id="label-3">未割り当て</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="status"></div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

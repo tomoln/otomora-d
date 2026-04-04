@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Ableton Link BPM Sync テスト</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #eee;
+    }
+    h3 { margin: 0 0 16px; }
+    button {
+      padding: 8px 18px;
+      margin: 4px;
+      background: #333;
+      color: #eee;
+      border: 2px solid #555;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    button:disabled { opacity: 0.4; cursor: default; }
+    button.active { background: #0d4a6e; border-color: #44aaff; color: #fff; }
+    #bpm-display {
+      font-size: 3em;
+      font-weight: bold;
+      color: #44aaff;
+      margin: 16px 0 4px;
+      letter-spacing: 2px;
+    }
+    #beat-indicator {
+      display: flex;
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .beat-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #333;
+      border: 2px solid #555;
+      transition: background 0.05s;
+    }
+    .beat-dot.active { background: #44aaff; border-color: #88ccff; }
+    .beat-dot.downbeat { background: #ff8844; border-color: #ffaa66; }
+    #status { margin-top: 10px; color: #aaa; font-size: 0.85em; }
+    #peers { color: #88ff88; font-size: 0.85em; margin-top: 4px; }
+    #phase-bar-container {
+      width: 300px;
+      height: 8px;
+      background: #333;
+      border-radius: 4px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    #phase-bar {
+      height: 100%;
+      width: 0%;
+      background: #44aaff;
+      border-radius: 4px;
+      transition: width 0.05s linear;
+    }
+  </style>
+</head>
+<body>
+  <h3>Ableton Link BPM Sync テスト</h3>
+
+  <button id="btn-start">▶ 開始</button>
+  <button id="btn-stop" disabled>■ 停止</button>
+
+  <div id="bpm-display">-- BPM</div>
+
+  <div id="beat-indicator">
+    <div class="beat-dot" id="dot-0"></div>
+    <div class="beat-dot" id="dot-1"></div>
+    <div class="beat-dot" id="dot-2"></div>
+    <div class="beat-dot" id="dot-3"></div>
+  </div>
+
+  <div id="phase-bar-container">
+    <div id="phase-bar"></div>
+  </div>
+
+  <div id="status">待機中</div>
+  <div id="peers">Linkピア: --</div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

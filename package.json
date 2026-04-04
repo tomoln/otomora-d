@@ -8,13 +8,18 @@
     "test:timestretch": "cross-env OTOMORA_TEST=timestretch electron .",
     "test:audiosync": "cross-env OTOMORA_TEST=audio_point electron .",
     "test:pitchdrop": "cross-env OTOMORA_TEST=pitchdrop electron .",
-    "test:granular":  "cross-env OTOMORA_TEST=granular electron ."
+    "test:granular": "cross-env OTOMORA_TEST=granular electron .",
+    "test:bpm_sync": "cross-env OTOMORA_TEST=bpm_sync electron .",
+    "test:midi_send": "cross-env OTOMORA_TEST=midi_send electron .",
+    "rebuild": "electron-rebuild -w abletonlink"
   },
   "dependencies": {
+    "abletonlink": "^0.2.0-beta.0",
     "soundtouchjs": "^0.2.3"
   },
   "devDependencies": {
     "cross-env": "^10.1.0",
-    "electron": "^29.0.0"
+    "electron": "^29.0.0",
+    "electron-rebuild": "^3.2.9"
   }
 }
