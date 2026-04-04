@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "abletonlink": "^0.2.0-beta.0",
+    "midi": "^2.0.0",
     "soundtouchjs": "^0.2.3"
   },
   "devDependencies": {
