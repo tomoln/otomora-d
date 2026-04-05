@@ -93,7 +93,6 @@ function start(win) {
  */
 function stop() {
   closeAllPorts();
-  _win = null;
 }
 
 module.exports = { start, stop };

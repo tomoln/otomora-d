@@ -1,20 +1,34 @@
 const audioEngine = require('./AudioEngine');
 
 class FadeManager {
+  constructor() {
+    this._destination = null; // null のときは audioEngine.masterGain にフォールバック
+  }
+
+  /**
+   * 音声の出力先ノードを設定する。
+   * index.js で effectChain.init() 完了後に effectChain.inputNode を渡すこと。
+   * 設定しない場合は audioEngine.masterGain に直接接続される。
+   * @param {AudioNode} node
+   */
+  set destination(node) {
+    this._destination = node;
+  }
+
   // ── ノード生成 ────────────────────────────────────────────
 
   /**
-   * masterGain に接続済みの GainNode を生成して返す。
+   * 出力先ノードに接続済みの GainNode を生成して返す。
    * GridPlayer は各スライスの BufferSourceNode をこのノード経由で出力する。
    *
-   *   src → gainNode → masterGain → destination
+   *   src → gainNode → destination(effectChain.inputNode) → ... → masterGain
    *
    * @returns {GainNode}
    */
   createFadeNode() {
     const gain = audioEngine.context.createGain();
     gain.gain.value = 1.0;
-    gain.connect(audioEngine.masterGain);
+    gain.connect(this._destination ?? audioEngine.masterGain);
     return gain;
   }
 

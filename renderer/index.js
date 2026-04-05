@@ -9,6 +9,8 @@ const effectChain      = require('./effects/EffectChain');
 const midiController   = require('./midi/MidiController');
 const midiMapping      = require('./midi/MidiMapping');
 
+const fadeManager      = require('./audio/FadeManager');
+
 const fileSelector     = require('./ui/FileSelector');
 const gridView         = require('./ui/GridView');
 const wordDisplay      = require('./ui/WordDisplay');
@@ -33,10 +35,12 @@ function toggleEffect(key) {
 // ── 起動処理（ユーザー操作起点で AudioContext を開始） ───────────────────────
 async function boot() {
   // ① AudioContext 初期化（ブラウザ制約: ユーザー操作後に呼ぶこと）
-  audioEngine.init();
+  await audioEngine.init();
 
   // ② エフェクトチェーン（AudioWorklet を含む非同期処理）
   await effectChain.init();
+  // 音声出力先を effectChain の入り口に変更（スライス音がエフェクトを通るようにする）
+  fadeManager.destination = effectChain.inputNode;
 
   // ③ BPM 同期（IPC 経由で Ableton Link から受信）
   bpmSync.start();

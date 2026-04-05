@@ -7,12 +7,33 @@ const appStore     = require('../store/AppStore');
 
 const GRID_SIZE = 96; // 6小節 × 16分割
 
+// ── タイムストレッチ ON/OFF ────────────────────────────────────────────────────
+// false にするとストレッチをスキップし、スライスをそのままの長さで再生する。
+// アプリを再起動すると反映される。true/false を切り替えて試してみてください。
+const ENABLE_TIME_STRETCH = false;
+
+// ── スライス先頭フェードイン（秒）─────────────────────────────────────────────
+// 全スライスの冒頭にかけるフェードインの長さ。再生開始時のクリックノイズ防止用。
+// 大きくするほど滑らかに始まるが、アタックが遅れる。推奨: 0.003〜0.01
+const SLICE_FADE_IN_SEC = 0.01;
+
+// ── スライス末尾フェードアウト（秒）────────────────────────────────────────────
+// 全スライスの終端にかけるフェードアウトの長さ。クリックノイズ防止用。
+// 大きくするほど滑らかに消えるが、スライスの末尾が早く消える。推奨: 0.01〜0.05
+const SLICE_FADE_OUT_SEC = 0.02;
+
 class GridPlayer {
   constructor() {
     this._beatHandler  = null;
     this._currentGain  = null;  // 現在再生中スライスの GainNode
     this._isPlaying    = false;
     this._onSliceCb    = null;  // UI 通知コールバック
+    this._stretchCache = new Map();
+
+    // x2 トグルやファイル変更で targetSec が変わるためキャッシュをクリア
+    const clearCache = () => this._stretchCache.clear();
+    appStore.on('x2', clearCache);
+    appStore.on('selectedFile', clearCache);
   }
 
   // ── ライフサイクル ────────────────────────────────────────────────────────
@@ -67,47 +88,76 @@ class GridPlayer {
   // ── 内部 ─────────────────────────────────────────────────────────────────
 
   _handleBeat(sixteenth, when) {
+    // DEBUG: ビートハンドラーが呼ばれたことを確認
+    console.log('🔥 _handleBeat called', { sixteenth, when, slicesLength: sliceManager.slices.length });
+
     const slices = sliceManager.slices;
-    if (!slices.length) return;
+    if (!slices.length) {
+      console.log('❌ No slices, returning');
+      return;
+    }
 
-    const slot     = sixteenth % GRID_SIZE;
-    const slice    = slices[slot % slices.length];
-    const bpm      = appStore.bpm;
-    const x2       = appStore.x2;
+    const bpm     = appStore.bpm;
+    const x2      = appStore.x2;
+    const cellSec = 240 / (bpm * 16); // Link 1 sixteenth の長さ（秒）
 
-    // 1 グリッドセルの長さ（秒）
-    // 1 sixteenth = 240 / (bpm × 16) 秒
-    const cellSec   = 240 / (bpm * 16);
-    const targetSec = x2 ? cellSec / 2 : cellSec;
+    if (x2) {
+      // x2 ON: 1 sixteenth ごとに 2 スライスを再生（実効 BPM が 2 倍）
+      const targetSec = cellSec / 2;
+      this._scheduleSlice(slices, (sixteenth * 2)     % GRID_SIZE, when,               targetSec);
+      this._scheduleSlice(slices, (sixteenth * 2 + 1) % GRID_SIZE, when + cellSec / 2, targetSec);
+    } else {
+      this._scheduleSlice(slices, sixteenth % GRID_SIZE, when, cellSec);
+    }
+  }
 
-    // タイムストレッチ: スライスを targetSec に合わせる
-    const buffer = this._getStretched(slice.buffer, targetSec);
+  /**
+   * 指定スロットのスライスを指定時刻にスケジュールする。
+   *
+   * @param {Array}  slices     SliceManager.slices
+   * @param {number} slot       グリッド位置 (0〜GRID_SIZE-1)
+   * @param {number} when       AudioContext 時刻（スケジュール基準）
+   * @param {number} targetSec  タイムストレッチの目標長さ（秒）
+   */
+  _scheduleSlice(slices, slot, when, targetSec) {
+    const sliceIndex = slot % slices.length;
+    const slice      = slices[sliceIndex];
+    console.log('📦 Selected slice', { slot, mora: slice.mora, bufferDuration: slice.buffer.duration });
+
+    // タイムストレッチ: スライスを targetSec に合わせる（結果はキャッシュ）
+    const buffer = this._getStretched(slice.buffer, targetSec, sliceIndex);
+
+    // stretch 処理に時間がかかって when が過去になった場合を補正
+    const safeWhen = Math.max(when, audioEngine.context.currentTime + 0.005);
 
     // 前のスライスが重なる場合はフェードアウトをスケジュール
     if (this._currentGain) {
-      fadeManager.scheduleFadeOut(this._currentGain, when, 0.02);
+      fadeManager.scheduleFadeOut(this._currentGain, safeWhen, 0.02);
     }
 
-    // GainNode 経由で再生
+    console.log('🎛️ Creating GainNode');
     const gainNode = fadeManager.createFadeNode();
     this._currentGain = gainNode;
+
+    // 先頭フェードイン（クリックノイズ防止）
+    gainNode.gain.setValueAtTime(0, safeWhen);
+    gainNode.gain.linearRampToValueAtTime(1.0, safeWhen + SLICE_FADE_IN_SEC);
 
     const src = audioEngine.context.createBufferSource();
     src.buffer = buffer;
     src.connect(gainNode);
-    src.start(when);
+    console.log('▶️ Starting audio', { bufferDuration: buffer.duration, safeWhen, audioContextTime: audioEngine.context.currentTime });
+    src.start(safeWhen);
 
-    // 音がセルより短い場合は終端前にフェードアウト（クリック防止）
-    if (buffer.duration < targetSec - 0.02) {
-      const fadeStart = when + buffer.duration - 0.02;
-      if (fadeStart > when) {
-        fadeManager.scheduleFadeOut(gainNode, fadeStart, 0.02);
-      }
+    // 全スライスの終端にフェードアウト（クリックノイズ防止）
+    const fadeStart = safeWhen + buffer.duration - SLICE_FADE_OUT_SEC;
+    if (fadeStart > safeWhen) {
+      fadeManager.scheduleFadeOut(gainNode, fadeStart, SLICE_FADE_OUT_SEC);
     }
 
-    // UI へ通知（when のタイミングで発火）
+    // UI へ通知（safeWhen のタイミングで発火）
     if (this._onSliceCb) {
-      const delay = Math.max((when - audioEngine.context.currentTime) * 1000, 0);
+      const delay = Math.max((safeWhen - audioEngine.context.currentTime) * 1000, 0);
       setTimeout(() => {
         if (this._onSliceCb) this._onSliceCb(slice, slot);
       }, delay);
@@ -122,15 +172,24 @@ class GridPlayer {
    * @param {number} targetSec
    * @returns {AudioBuffer}
    */
-  _getStretched(buffer, targetSec) {
+  _getStretched(buffer, targetSec, cacheKey) {
     const sliceDur = buffer.duration;
-    if (Math.abs(sliceDur - targetSec) < 0.005) {
+    if (!ENABLE_TIME_STRETCH || Math.abs(sliceDur - targetSec) < 0.005) {
       return buffer;
     }
+
+    const key = `${cacheKey}_${targetSec.toFixed(4)}`;
+    if (this._stretchCache.has(key)) return this._stretchCache.get(key);
+
+    // キャッシュが大きくなりすぎたらクリア（BPM が大きく変動した場合など）
+    if (this._stretchCache.size >= 300) this._stretchCache.clear();
+
     // tempo = 元の長さ / 目標の長さ
     // tempo > 1 → 速くして短くなる, tempo < 1 → 遅くして長くなる
     const tempo = sliceDur / targetSec;
-    return timeStretcher.stretch(buffer, tempo);
+    const stretched = timeStretcher.stretch(buffer, tempo);
+    this._stretchCache.set(key, stretched);
+    return stretched;
   }
 }
 
