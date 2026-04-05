@@ -2,7 +2,7 @@
   "name": "otomora-d",
   "version": "0.1.0",
   "description": "Otomora D",
-  "main": "src/main/main.js",
+  "main": "main/main.js",
   "scripts": {
     "start": "electron .",
     "test:timestretch": "cross-env OTOMORA_TEST=timestretch electron .",

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Otomora D</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Helvetica Neue', sans-serif;
+      background: #111;
+      color: #ddd;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    /* ── ブート画面 ────────────────────── */
+    #boot-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 80vh;
+    }
+
+    #btn-boot {
+      padding: 16px 48px;
+      font-size: 1.4em;
+      background: #222;
+      color: #eee;
+      border: 2px solid #555;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #btn-boot:hover { background: #333; }
+
+    /* ── メイン UI ──────────────────────── */
+    #main-ui { display: none; }
+
+    .section {
+      margin-bottom: 20px;
+      padding: 14px 16px;
+      background: #1a1a1a;
+      border-radius: 6px;
+    }
+
+    .section-title {
+      font-size: 0.72em;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    /* ── 操作ボタン行 ───────────────────── */
+    #controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    #controls button {
+      padding: 6px 18px;
+      background: #333;
+      color: #ccc;
+      border: 1px solid #555;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    #controls button:hover { background: #444; }
+
+    #btn-play  { border-color: #4caf50; color: #4caf50; }
+    #btn-stop  { border-color: #f44336; color: #f44336; }
+
+    /* ── レイアウト: 左右2カラム ──────── */
+    #layout {
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 16px;
+    }
+
+    #left  { display: flex; flex-direction: column; gap: 16px; }
+    #right { display: flex; flex-direction: column; gap: 16px; }
+  </style>
+</head>
+<body>
+
+  <!-- ブート（AudioContext はユーザー操作後に開始） -->
+  <div id="boot-section">
+    <button id="btn-boot">起動</button>
+  </div>
+
+  <!-- メイン UI（boot() 完了後に表示） -->
+  <div id="main-ui">
+
+    <!-- ファイル選択 -->
+    <div class="section">
+      <div class="section-title">File</div>
+      <div id="file-selector"></div>
+    </div>
+
+    <!-- 再生コントロール -->
+    <div class="section">
+      <div id="controls">
+        <button id="btn-play">▶ Play</button>
+        <button id="btn-stop">■ Stop</button>
+        <button id="btn-x2">x2: OFF</button>
+      </div>
+    </div>
+
+    <div id="layout">
+      <div id="left">
+
+        <!-- グリッド -->
+        <div class="section">
+          <div class="section-title">Grid</div>
+          <div id="grid-view"></div>
+        </div>
+
+        <!-- 音響特徴量 -->
+        <div class="section">
+          <div class="section-title">Audio Features</div>
+          <div id="effect-visualizer"></div>
+        </div>
+
+      </div>
+
+      <div id="right">
+
+        <!-- モーラ・単語表示 -->
+        <div class="section">
+          <div class="section-title">Word</div>
+          <div id="word-display"></div>
+        </div>
+
+        <!-- エフェクトパネル -->
+        <div class="section">
+          <div class="section-title">Effects</div>
+          <div id="effect-panel"></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>
