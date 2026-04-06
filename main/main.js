@@ -55,7 +55,11 @@ function createWindow() {
     },
   });
 
-  win.loadFile(path.join(__dirname, '..', 'renderer', 'index.html'));
+  const test = process.env.OTOMORA_TEST;
+  const entryFile = test === 'visualizer'
+    ? path.join(__dirname, '..', 'testsrc', 'visualizer_test', 'index.html')
+    : path.join(__dirname, '..', 'renderer', 'index.html');
+  win.loadFile(entryFile);
 
   linkBridge.start(win);
   midiMain.start(win);
